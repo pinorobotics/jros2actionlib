@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 jrosactionlib project
+ * Copyright 2022 jrosactionlib project
  *
  * Website: https://github.com/pinorobotics/jros2actionlib
  *
@@ -16,18 +16,24 @@
  * limitations under the License.
  */
 /**
- * Java module which allows to interact with <a href="http://wiki.ros.org/actionlib/">ROS2 (Robot
- * Operating System) Action Server</a>.
+ * Java module which allows to interact with <a
+ * href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2 (Robot
+ * Operating System) Actions</a>.
  *
- * @see <a href="https://github.com/pinorobotics/jros1actionlib/releases">Download</a>
- * @see <a href="https://github.com/pinorobotics/jros1actionlib">GitHub repository</a>
+ * @see <a href="https://github.com/pinorobotics/jros2actionlib">GitHub repository</a>
+ * @see <a href="https://github.com/pinorobotics/jros2actionlib/releases">Download</a>
+ * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
+ *     Actions</a>
+ * @see <a href="http://design.ros2.org/articles/actions.html">ROS2 Actions Implementation</a>
  * @author aeon_flux aeon_flux@eclipso.ch
  */
 module jros2actionlib {
     requires transitive jrosactionlib;
     requires transitive jros2messages;
+    requires transitive jros2client;
     requires id.xfunction;
     requires jrosmessages;
+    requires jros2services;
 
     exports pinorobotics.jros2actionlib;
     exports pinorobotics.jros2actionlib.actionlib_msgs;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 jrosactionlib project
+ * Copyright 2022 jrosactionlib project
  * 
  * Website: https://github.com/pinorobotics/jros2actionlib
  * 
@@ -17,47 +17,59 @@
  */
 package pinorobotics.jros2actionlib;
 
-import id.jrosclient.JRosClient;
+import id.jros2client.JRos2Client;
 import id.jrosmessages.Message;
 import id.xfunction.logging.XLogger;
-import pinorobotics.jros2actionlib.msgs.GoalIdMessage;
-import pinorobotics.jrosactionlib.JRosActionClient;
-import pinorobotics.jrosactionlib.msgs.ActionDefinition;
-import pinorobotics.jrosactionlib.msgs.GoalId;
+import java.util.concurrent.CompletableFuture;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalIdMessage;
+import pinorobotics.jros2services.JRos2ServiceClient;
+import pinorobotics.jrosactionlib.impl.AbstractJRosActionClient;
+import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 
 /**
  * Client which allows to interact with ROS2 Action Server. It communicates with it via a "ROS
  * Action Protocol"
  *
- * @see <a href="http://wiki.ros.org/actionlib/DetailedDescription">Actionlib</a>
  * @param <G> message type used to represent a goal
  * @param <R> message type sent by ActionServer upon goal completion
+ * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
+ *     Actions</a>
+ * @see <a href="http://design.ros2.org/articles/actions.html">ROS2 Actions Implementation</a>
  * @author aeon_flux aeon_flux@eclipso.ch
  */
 public class JRos2ActionClient<G extends Message, R extends Message>
-        extends JRosActionClient<G, R> {
+        extends AbstractJRosActionClient<Action2GoalIdMessage, G, R> {
 
     private static final XLogger LOGGER = XLogger.getLogger(JRos2ActionClient.class);
+    private Action2Definition<G, R> actionDefinition;
+    private JRos2ServiceClient<Action2GetResultRequestMessage, ActionResultMessage<R>>
+            serviceClient;
 
-    /**
-     * Creates a new instance of the client
-     *
-     * @param client ROS client
-     * @param actionDefinition message type definitions for an action
-     * @param actionServerName name of the action server which will execute the actions
-     */
     JRos2ActionClient(
-            JRosClient client, ActionDefinition<G, R> actionDefinition, String actionServerName) {
+            JRos2Client client,
+            JRos2ServiceClient<Action2GetResultRequestMessage, ActionResultMessage<R>>
+                    serviceClient,
+            Action2Definition<G, R> actionDefinition,
+            String actionServerName) {
         super(client, actionDefinition, actionServerName);
+        this.serviceClient = serviceClient;
+        this.actionDefinition = actionDefinition;
     }
 
     @Override
-    protected GoalId createGoalId() {
-        return GoalIdMessage.generate();
+    protected Action2GoalIdMessage createGoalId() {
+        return Action2GoalIdMessage.generate();
     }
 
     @Override
-    protected String asSendGoalTopicName(String actionServerName) {
-        return actionServerName + "/_action/send_goalRequest";
+    protected CompletableFuture<ActionResultMessage<R>> callGetResult(Action2GoalIdMessage goalId)
+            throws Exception {
+        LOGGER.info("Calling Get Result for goal with id {0}", goalId);
+        var getResultRequest =
+                actionDefinition.getActionResultRequestMessage().getConstructor().newInstance();
+        getResultRequest.withGoalId(goalId);
+        return serviceClient.sendRequestAsync(getResultRequest);
     }
 }

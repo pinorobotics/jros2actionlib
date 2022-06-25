@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 jrosactionlib project
+ * Copyright 2022 jrosactionlib project
  * 
  * Website: https://github.com/pinorobotics/jros2actionlib
  * 
@@ -17,12 +17,16 @@
  */
 package pinorobotics.jros2actionlib;
 
-import id.jrosclient.JRosClient;
+import id.jros2client.JRos2Client;
 import id.jrosclient.RosVersion;
 import id.jrosmessages.Message;
 import id.xfunction.Preconditions;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
+import pinorobotics.jros2services.JRos2ServiceClientFactory;
+import pinorobotics.jros2services.service_msgs.ServiceDefinition;
 import pinorobotics.jrosactionlib.JRosActionClient;
-import pinorobotics.jrosactionlib.msgs.ActionDefinition;
+import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 
 /**
  * Factory methods for {@link JRos2ActionClient}
@@ -41,9 +45,28 @@ public class JRos2ActionClientFactory {
      * @param <R> message type sent by ActionServer upon goal completion
      */
     public <G extends Message, R extends Message> JRosActionClient<G, R> createJRosActionClient(
-            JRosClient client, ActionDefinition<G, R> actionDefinition, String actionServerName) {
+            JRos2Client client, Action2Definition<G, R> actionDefinition, String actionServerName) {
         Preconditions.isTrue(
                 client.getSupportedRosVersion().contains(RosVersion.ROS2), "Requires ROS2 client");
-        return new JRos2ActionClient<>(client, actionDefinition, actionServerName);
+
+        var factory = new JRos2ServiceClientFactory();
+        var serviceDefinition =
+                new ServiceDefinition<Action2GetResultRequestMessage, ActionResultMessage<R>>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public Class<Action2GetResultRequestMessage> getServiceRequestMessage() {
+                        return (Class<Action2GetResultRequestMessage>)
+                                actionDefinition.getActionResultRequestMessage();
+                    }
+
+                    @Override
+                    public Class<ActionResultMessage<R>> getServiceResponseMessage() {
+                        return (Class<ActionResultMessage<R>>)
+                                actionDefinition.getActionResultMessage();
+                    }
+                };
+        var serviceClient =
+                factory.createJRos2ServiceClient(client, serviceDefinition, actionServerName);
+        return new JRos2ActionClient<>(client, serviceClient, actionDefinition, actionServerName);
     }
 }

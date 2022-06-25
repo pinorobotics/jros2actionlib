@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 jrosactionlib project
+ * Copyright 2022 jrosactionlib project
  *
  * Website: https://github.com/pinorobotics/jrosactionlib
  *
@@ -15,7 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** @author aeon_flux aeon_flux@eclipso.ch */
+/**
+ * @author aeon_flux aeon_flux@eclipso.ch
+ */
 open module jrosrviztools.tests {
     requires id.xfunction;
     requires id.kineticstreamer;

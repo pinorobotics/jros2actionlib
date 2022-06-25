@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 jrosactionlib project
+ * Copyright 2022 jrosactionlib project
  * 
  * Website: https://github.com/pinorobotics/jros2actionlib
  * 
@@ -15,22 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pinorobotics.jros2actionlib.msgs;
+package pinorobotics.jros2actionlib.actionlib_msgs;
 
 import id.jros2messages.unique_identifier_msgs.UUIDMessage;
 import java.util.UUID;
-import pinorobotics.jrosactionlib.msgs.GoalId;
+import pinorobotics.jrosactionlib.msgs.ActionGoalIdMessage;
 
-/** Definition for ROS2 GoalIdMessage */
-public class GoalIdMessage extends UUIDMessage implements GoalId {
+/** Definition for ROS2 {@link ActionGoalIdMessage}. */
+public class Action2GoalIdMessage extends UUIDMessage implements ActionGoalIdMessage {
 
-    public GoalIdMessage() {}
+    public Action2GoalIdMessage() {}
 
-    public GoalIdMessage(UUID uuid) {
+    public Action2GoalIdMessage(UUID uuid) {
         super(uuid);
     }
 
-    public static GoalIdMessage generate() {
-        return new GoalIdMessage(UUID.randomUUID());
+    public static Action2GoalIdMessage generate() {
+        return new Action2GoalIdMessage(UUID.randomUUID());
     }
 }

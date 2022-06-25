@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 jrosactionlib project
+ * Copyright 2022 jrosactionlib project
  * 
  * Website: https://github.com/pinorobotics/jros2actionlib
  * 
@@ -19,8 +19,8 @@ package pinorobotics.jrosrviztools.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import id.jros2client.JRos2Client;
 import id.jros2client.JRos2ClientFactory;
-import id.jrosclient.JRosClient;
 import id.jrosmessages.std_msgs.Int32Message;
 import id.xfunction.ResourceUtils;
 import id.xfunction.logging.XLogger;
@@ -31,13 +31,14 @@ import jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResultMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pinorobotics.jros2actionlib.JRos2ActionClientFactory;
 import pinorobotics.jrosactionlib.JRosActionClient;
 
 public class JRos2ActionClientIntegrationTests {
 
     private static final ResourceUtils resourceUtils = new ResourceUtils();
-    private static JRosClient client;
+    private static JRos2Client client;
     private JRosActionClient<FibonacciGoalMessage, FibonacciResultMessage> actionClient;
 
     @BeforeAll
@@ -47,7 +48,7 @@ public class JRos2ActionClientIntegrationTests {
 
     @BeforeEach
     public void setup() throws MalformedURLException {
-        client = new JRos2ClientFactory().createJRosClient();
+        client = new JRos2ClientFactory().createSpecializedJRos2Client();
         actionClient =
                 new JRos2ActionClientFactory()
                         .createJRosActionClient(
@@ -60,10 +61,10 @@ public class JRos2ActionClientIntegrationTests {
         client.close();
     }
 
-    // @Test
+    @Test
     public void test_sendGoal() throws Exception {
         var goal = new FibonacciGoalMessage().withOrder(new Int32Message().withData(13));
-        var result = actionClient.sendGoal(goal).get();
+        var result = actionClient.sendGoalAsync(goal).get();
         System.out.println(result);
         assertEquals(resourceUtils.readResource("test_sendGoal"), result.toString());
     }

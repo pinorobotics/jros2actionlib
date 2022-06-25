@@ -13,25 +13,21 @@ plugins {
 }
 
 dependencies {
-    implementation 'io.github.lambdaprime:jros2messages:1.0-SNAPSHOT'
     implementation 'io.github.pinorobotics:jrosactionlib:1.0-SNAPSHOT'
+    implementation 'io.github.pinorobotics:jros2services:1.0-SNAPSHOT'
+    implementation 'io.github.lambdaprime:jros2messages:1.0-SNAPSHOT'
+    implementation 'io.github.lambdaprime:jros2client:1.0-SNAPSHOT'
 
     // transitively export following dependency to tests project
-    apiElements 'io.github.lambdaprime:jros2messages:1.0-SNAPSHOT'
     apiElements 'io.github.pinorobotics:jrosactionlib:1.0-SNAPSHOT'
+    apiElements 'io.github.pinorobotics:jros2services:1.0-SNAPSHOT'
+    apiElements 'io.github.lambdaprime:jros2messages:1.0-SNAPSHOT'
+    apiElements 'io.github.lambdaprime:jros2client:1.0-SNAPSHOT'
 }
 
 jar { 
     manifest { 
         attributes 'Implementation-Version': "${rootProject.version}"
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs += ["src/main/gen/java"]
-        }
     }
 }
 
