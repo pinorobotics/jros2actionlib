@@ -23,6 +23,8 @@ import id.jros2client.JRos2Client;
 import id.jros2client.JRos2ClientFactory;
 import id.jrosmessages.std_msgs.Int32Message;
 import id.xfunction.ResourceUtils;
+import id.xfunction.lang.XExec;
+import id.xfunction.lang.XProcess;
 import id.xfunction.logging.XLogger;
 import java.net.MalformedURLException;
 import jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciActionDefinition;
@@ -40,6 +42,7 @@ public class JRos2ActionClientIntegrationTests {
     private static final ResourceUtils resourceUtils = new ResourceUtils();
     private static JRos2Client client;
     private JRosActionClient<FibonacciGoalMessage, FibonacciResultMessage> actionClient;
+    private XProcess service;
 
     @BeforeAll
     public static void setupAll() {
@@ -48,6 +51,14 @@ public class JRos2ActionClientIntegrationTests {
 
     @BeforeEach
     public void setup() throws MalformedURLException {
+        service =
+                new XExec(
+                                "bash",
+                                "-c",
+                                ". ws2/install/setup.sh &&"
+                                        + " ws2/build/action_tutorials_cpp/fibonacci_action_server")
+                        .run()
+                        .forwardOutputAsync();
         client = new JRos2ClientFactory().createSpecializedJRos2Client();
         actionClient =
                 new JRos2ActionClientFactory()
@@ -59,6 +70,7 @@ public class JRos2ActionClientIntegrationTests {
     public void clean() throws Exception {
         actionClient.close();
         client.close();
+        service.destroyAllForcibly();
     }
 
     @Test
