@@ -26,8 +26,8 @@ import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
  *
  * <p>In ROS2 even though {@link Action2GetResultRequestMessage} has same structure (fields) across
  * all actions, the type names of each {@link Action2GetResultRequestMessage} are different (for
- * example: FibonacciActionGetResult). For that reason each {@link Action2GetResultRequestMessage}
- * needs to be implemented for each action separately.
+ * example: action_tutorials_interfaces/FibonacciActionGetResult). For that reason each {@link
+ * Action2GetResultRequestMessage} needs to be implemented for each action separately.
  */
 public interface Action2GetResultRequestMessage extends Message {
 

@@ -28,5 +28,5 @@ open module jrosrviztools.tests {
     requires jrosclient;
     requires jrosactionlib;
 
-    exports pinorobotics.jrosrviztools.tests;
+    exports pinorobotics.jros2actionlib.tests;
 }

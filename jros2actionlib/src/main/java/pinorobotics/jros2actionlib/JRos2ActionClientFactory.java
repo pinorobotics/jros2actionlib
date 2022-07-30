@@ -25,7 +25,6 @@ import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2services.JRos2ServiceClientFactory;
 import pinorobotics.jros2services.service_msgs.ServiceDefinition;
-import pinorobotics.jrosactionlib.JRosActionClient;
 import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 
 /**
@@ -44,7 +43,7 @@ public class JRos2ActionClientFactory {
      * @param <G> message type used to represent a goal
      * @param <R> message type sent by ActionServer upon goal completion
      */
-    public <G extends Message, R extends Message> JRosActionClient<G, R> createJRosActionClient(
+    public <G extends Message, R extends Message> JRos2ActionClient<G, R> createClient(
             JRos2Client client, Action2Definition<G, R> actionDefinition, String actionServerName) {
         Preconditions.isTrue(
                 client.getSupportedRosVersion().contains(RosVersion.ROS2), "Requires ROS2 client");
@@ -65,8 +64,7 @@ public class JRos2ActionClientFactory {
                                 actionDefinition.getActionResultMessage();
                     }
                 };
-        var serviceClient =
-                factory.createJRos2ServiceClient(client, serviceDefinition, actionServerName);
+        var serviceClient = factory.createClient(client, serviceDefinition, actionServerName);
         return new JRos2ActionClient<>(client, serviceClient, actionDefinition, actionServerName);
     }
 }

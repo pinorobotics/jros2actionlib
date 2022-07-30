@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pinorobotics.jrosrviztools.tests;
+package pinorobotics.jros2actionlib.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,14 +27,14 @@ import id.xfunction.lang.XExec;
 import id.xfunction.lang.XProcess;
 import id.xfunction.logging.XLogger;
 import java.net.MalformedURLException;
-import jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciActionDefinition;
-import jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciGoalMessage;
-import jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResultMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pinorobotics.jros2actionlib.JRos2ActionClientFactory;
+import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciActionDefinition;
+import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciGoalMessage;
+import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResultMessage;
 import pinorobotics.jrosactionlib.JRosActionClient;
 
 public class JRos2ActionClientIntegrationTests {
@@ -59,11 +59,10 @@ public class JRos2ActionClientIntegrationTests {
                                         + " ws2/build/action_tutorials_cpp/fibonacci_action_server")
                         .run()
                         .forwardOutputAsync();
-        client = new JRos2ClientFactory().createSpecializedJRos2Client();
+        client = new JRos2ClientFactory().createClient();
         actionClient =
                 new JRos2ActionClientFactory()
-                        .createJRosActionClient(
-                                client, new FibonacciActionDefinition(), "fibonacci");
+                        .createClient(client, new FibonacciActionDefinition(), "fibonacci");
     }
 
     @AfterEach
