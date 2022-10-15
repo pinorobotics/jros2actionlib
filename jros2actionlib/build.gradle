@@ -12,6 +12,15 @@ plugins {
     id 'com.diffplug.spotless'
 }
 
+apply plugin : 'eclipse'
+
+eclipse.classpath.file {
+    // instruct eclipse plugin to put everything to module path
+    whenMerged {
+        entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
+    }
+}
+
 dependencies {
     implementation 'io.github.pinorobotics:jrosactionlib:1.0-SNAPSHOT'
     implementation 'io.github.pinorobotics:jros2services:1.0-SNAPSHOT'

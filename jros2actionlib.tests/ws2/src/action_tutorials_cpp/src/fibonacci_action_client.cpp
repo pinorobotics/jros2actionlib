@@ -42,7 +42,7 @@ public:
     }
 
     auto goal_msg = Fibonacci::Goal();
-    goal_msg.order = 234;
+    goal_msg.order = 10;
 
     RCLCPP_INFO(this->get_logger(), "Sending goal");
 
@@ -60,9 +60,8 @@ private:
   rclcpp_action::Client<Fibonacci>::SharedPtr client_ptr_;
   rclcpp::TimerBase::SharedPtr timer_;
 
-  void goal_response_callback(std::shared_future<GoalHandleFibonacci::SharedPtr> future)
+  void goal_response_callback(const GoalHandleFibonacci::SharedPtr & goal_handle)
   {
-    auto goal_handle = future.get();
     if (!goal_handle) {
       RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
     } else {

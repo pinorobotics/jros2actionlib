@@ -18,7 +18,7 @@
 /**
  * @author aeon_flux aeon_flux@eclipso.ch
  */
-open module jrosrviztools.tests {
+open module jros2actionlib.tests {
     requires id.xfunction;
     requires id.kineticstreamer;
     requires jros2client;
