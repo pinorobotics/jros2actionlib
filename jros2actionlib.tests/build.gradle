@@ -2,10 +2,8 @@ plugins {
     id 'com.diffplug.spotless'
 }
 
-apply plugin : 'eclipse'
-
 eclipse.classpath.file {
-    // intruct eclipse plugin to put everything to module path
+    // instruct eclipse plugin to put everything to module path
     whenMerged {
         entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
     }

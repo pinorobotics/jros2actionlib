@@ -20,6 +20,8 @@
  * href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2 (Robot
  * Operating System) Actions</a>.
  *
+ * <p>For usage examples see <a href="http://pinoweb.freetzi.com/jrosactionlib">Documentation</a>
+ *
  * @see <a href="https://github.com/pinorobotics/jros2actionlib">GitHub repository</a>
  * @see <a href="https://github.com/pinorobotics/jros2actionlib/releases">Download</a>
  * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
