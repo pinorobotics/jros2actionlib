@@ -23,9 +23,9 @@ import id.jrosmessages.Message;
 import id.xfunction.Preconditions;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2ResultMessage;
 import pinorobotics.jros2services.JRos2ServiceClientFactory;
 import pinorobotics.jros2services.service_msgs.ServiceDefinition;
-import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 
 /**
  * Factory methods for {@link JRos2ActionClient}
@@ -50,7 +50,7 @@ public class JRos2ActionClientFactory {
 
         var factory = new JRos2ServiceClientFactory();
         var serviceDefinition =
-                new ServiceDefinition<Action2GetResultRequestMessage, ActionResultMessage<R>>() {
+                new ServiceDefinition<Action2GetResultRequestMessage, Action2ResultMessage<R>>() {
                     @SuppressWarnings("unchecked")
                     @Override
                     public Class<Action2GetResultRequestMessage> getServiceRequestMessage() {
@@ -59,8 +59,8 @@ public class JRos2ActionClientFactory {
                     }
 
                     @Override
-                    public Class<ActionResultMessage<R>> getServiceResponseMessage() {
-                        return (Class<ActionResultMessage<R>>)
+                    public Class<Action2ResultMessage<R>> getServiceResponseMessage() {
+                        return (Class<Action2ResultMessage<R>>)
                                 actionDefinition.getActionResultMessage();
                     }
                 };

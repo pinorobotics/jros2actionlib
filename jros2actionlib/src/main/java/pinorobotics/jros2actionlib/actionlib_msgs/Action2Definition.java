@@ -31,6 +31,9 @@ public interface Action2Definition<G extends Message, R extends Message>
     @Override
     Class<? extends Action2GoalMessage<G>> getActionGoalMessage();
 
+    @Override
+    Class<? extends Action2ResultMessage<R>> getActionResultMessage();
+
     /**
      * In ROS2 Action Server does not return the {@link ActionResultMessage} after goal completes.
      * Action Client needs to request Action Server to return it (see <a

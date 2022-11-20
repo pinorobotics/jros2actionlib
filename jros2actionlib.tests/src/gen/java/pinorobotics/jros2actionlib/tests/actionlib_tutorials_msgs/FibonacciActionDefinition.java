@@ -20,7 +20,7 @@ package pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalMessage;
-import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2ResultMessage;
 
 public class FibonacciActionDefinition
         implements Action2Definition<FibonacciGoalMessage, FibonacciResultMessage> {
@@ -31,7 +31,7 @@ public class FibonacciActionDefinition
     }
 
     @Override
-    public Class<? extends ActionResultMessage<FibonacciResultMessage>> getActionResultMessage() {
+    public Class<? extends Action2ResultMessage<FibonacciResultMessage>> getActionResultMessage() {
         return FibonacciActionResultMessage.class;
     }
 
