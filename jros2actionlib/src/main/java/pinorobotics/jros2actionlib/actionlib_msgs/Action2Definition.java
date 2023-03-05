@@ -22,15 +22,19 @@ import pinorobotics.jrosactionlib.msgs.ActionDefinition;
 import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 
 /**
+ * {@inheritDoc}
+ *
  * @see <a href="https://design.ros2.org/articles/actions.html">Actions</a>
  * @author aeon_flux aeon_flux@eclipso.ch
  */
 public interface Action2Definition<G extends Message, R extends Message>
         extends ActionDefinition<Action2GoalIdMessage, G, R> {
 
+    /** {@inheritDoc} */
     @Override
     Class<? extends Action2GoalMessage<G>> getActionGoalMessage();
 
+    /** {@inheritDoc} */
     @Override
     Class<? extends Action2ResultMessage<R>> getActionResultMessage();
 

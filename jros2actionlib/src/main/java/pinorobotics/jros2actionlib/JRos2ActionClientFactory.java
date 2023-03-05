@@ -25,7 +25,7 @@ import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2ResultMessage;
 import pinorobotics.jros2services.JRos2ServiceClientFactory;
-import pinorobotics.jros2services.service_msgs.ServiceDefinition;
+import pinorobotics.jrosservices.msgs.ServiceDefinition;
 
 /**
  * Factory methods for {@link JRos2ActionClient}

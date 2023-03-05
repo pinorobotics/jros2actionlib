@@ -63,11 +63,23 @@ public class JRos2ActionClient<G extends Message, R extends Message>
         this.actionDefinition = actionDefinition;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public CompletableFuture<R> sendGoalAsync(G arg0) throws JRosActionLibException {
+        return super.sendGoalAsync(arg0);
+    }
+
+    /**
+     * @hidden exclude from javadoc
+     */
     @Override
     protected Action2GoalIdMessage createGoalId() {
         return Action2GoalIdMessage.generate();
     }
 
+    /**
+     * @hidden exclude from javadoc
+     */
     @Override
     protected CompletableFuture<? extends ActionResultMessage<R>> callGetResult(
             Action2GoalIdMessage goalId) {

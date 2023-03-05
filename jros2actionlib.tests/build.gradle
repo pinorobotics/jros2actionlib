@@ -1,36 +1,39 @@
 plugins {
-    id 'com.diffplug.spotless'
+  id 'com.diffplug.spotless'
+  id 'jacoco'
 }
 
 eclipse.classpath.file {
-    // instruct eclipse plugin to put everything to module path
-    whenMerged {
-        entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
-    }
+  // instruct eclipse plugin to put everything to module path
+  whenMerged {
+    entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
+  }
 }
 
 dependencies {
-    testImplementation project(':jros2actionlib')
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
-    testRuntimeOnly 'org.junit.platform:junit-platform-commons:1.7.0'
+  testImplementation project(':jros2actionlib')
+
+  def junitVersion = "5.8.1"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+  testRuntimeOnly "org.junit.platform:junit-platform-commons:1.7.0"
 }
 
 sourceSets {
-    test {
-        java {
-            srcDirs += ["src/gen/java"]
-        }
+  test {
+    java {
+      srcDirs += ["src/gen/java"]
     }
+  }
 }
 
 test {
-    useJUnitPlatform()
+  useJUnitPlatform()
 
-    testLogging {
-        events "started", "failed"
-    }
+  testLogging {
+    events "started", "failed"
+  }
 }
 
 // run spotless and format code before the build
