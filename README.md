@@ -6,7 +6,7 @@ Java 17+
 
 # Download
 
-[Release versions](https://github.com/pinorobotics/jros2actionlib/releases)
+[Release versions](jros2actionlib/release/CHANGELOG.md)
 
 Or you can add dependency to it as follows:
 
@@ -14,7 +14,7 @@ Gradle:
 
 ```
 dependencies {
-    implementation 'io.github.pinorobotics:jros2actionlib:1.0'
+  implementation 'io.github.pinorobotics:jros2actionlib:2.0'
 }
 ```
 
