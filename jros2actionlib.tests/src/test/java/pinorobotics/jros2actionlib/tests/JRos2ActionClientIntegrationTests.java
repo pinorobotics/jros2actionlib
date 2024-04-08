@@ -58,7 +58,7 @@ public class JRos2ActionClientIntegrationTests {
                                 ". ws2/install/setup.sh &&"
                                         + " ws2/build/action_tutorials_cpp/fibonacci_action_server")
                         .start()
-                        .forwardOutputAsync();
+                        .forwardOutputAsync(true);
         client = new JRos2ClientFactory().createClient();
         actionClient =
                 new JRos2ActionClientFactory()

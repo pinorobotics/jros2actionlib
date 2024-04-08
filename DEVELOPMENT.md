@@ -4,7 +4,7 @@ Building module locally and making changes to it (this is optional and not inten
 
 ## With Eclipse
 
-- Build eclipse projects:
+- Build Eclipse projects:
 
 ``` bash
 gradle eclipse

@@ -3,7 +3,7 @@ Based on [Writing an action server and client](https://docs.ros.org/en/galactic/
 # Prereqs
 
 ``` bash
-sudo apt install ros-foxy-action-tutorials-cpp
+sudo apt install ros-humble-action-tutorials-cpp
 ```
 
 # Build

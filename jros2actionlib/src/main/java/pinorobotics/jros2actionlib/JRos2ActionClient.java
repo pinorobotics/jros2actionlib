@@ -19,9 +19,9 @@ package pinorobotics.jros2actionlib;
 
 import id.jros2client.JRos2Client;
 import id.jrosmessages.Message;
-import id.xfunction.RetryException;
-import id.xfunction.XUtils;
 import id.xfunction.logging.XLogger;
+import id.xfunction.retry.RetryException;
+import id.xfunction.retry.RetryableExecutor;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
@@ -51,6 +51,7 @@ public class JRos2ActionClient<G extends Message, R extends Message>
     private Action2Definition<G, R> actionDefinition;
     private JRos2ServiceClient<Action2GetResultRequestMessage, Action2ResultMessage<R>>
             serviceClient;
+    private RetryableExecutor executor = new RetryableExecutor();
 
     JRos2ActionClient(
             JRos2Client client,
@@ -83,7 +84,7 @@ public class JRos2ActionClient<G extends Message, R extends Message>
     @Override
     protected CompletableFuture<? extends ActionResultMessage<R>> callGetResult(
             Action2GoalIdMessage goalId) {
-        return XUtils.retryIndefinitelyAsync(
+        return executor.retryIndefinitelyAsync(
                 () -> callGetResultInternal(goalId), Duration.ofSeconds(1));
     }
 
