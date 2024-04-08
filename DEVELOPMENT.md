@@ -14,6 +14,7 @@ gradle eclipse
 
 # Release steps
 
+- Update [Android dependencies](android/build.gradle) and run `gradle clean build -b android/build.gradle`
 - Close version in gradle.properties
 - Run `gradle clean build javadoc`
 - Publish
