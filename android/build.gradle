@@ -16,7 +16,7 @@ java {
 dependencies {
   api "io.github.lambdaprime:id.xfunction:25.0:android@aar"
   api "io.github.pinorobotics:jros2services:4.0"
-  api "io.github.pinorobotics:jrosactionlib:3.0-SNAPSHOT"
+  api "io.github.pinorobotics:jrosactionlib:3.0"
 }
 
 android {
