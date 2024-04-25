@@ -10,7 +10,8 @@ eclipse.classpath.file {
 }
 
 dependencies {
-  testImplementation project(':jros2actionlib')
+  testImplementation project(":${zzName}")
+  zzTestDependencies.split(',').findAll{ !it.isBlank() }.each { testImplementation it }
 
   def junitVersion = "5.8.1"
   testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"

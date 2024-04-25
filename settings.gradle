@@ -1,2 +1,2 @@
-include 'jros2actionlib'
-include 'jros2actionlib.tests'
+include "${zzName}"
+include "${zzName}.tests"

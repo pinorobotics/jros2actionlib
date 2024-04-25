@@ -24,11 +24,10 @@ subprojects {
   apply plugin: 'java'
   apply plugin: 'eclipse'
 
-  def javaVersion = 17
-  sourceCompatibility = javaVersion
-  targetCompatibility = javaVersion
+  sourceCompatibility = zzJavaVersion
+  targetCompatibility = zzJavaVersion
   tasks.withType(JavaCompile) {
-    options.release = javaVersion
+    options.release = Integer.parseInt(zzJavaVersion)
   }
 
   // setup spotless config for all subprojects
@@ -42,10 +41,10 @@ subprojects {
         // Use Android style which has 4 whitespaces instead 2 by default
         googleJavaFormat().aosp().reflowLongStrings()
 
-          licenseHeader '''/*
- * Copyright $YEAR jrosactionlib project
+        licenseHeader '''/*
+ * Copyright $YEAR %s project
  * 
- * Website: https://github.com/pinorobotics/jros2actionlib
+ * Website: https://github.com/%s/%s
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +58,7 @@ subprojects {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'''
+'''.formatted(zzCopyright, zzNamespace, zzName)
       }
     }
   }
@@ -68,7 +67,7 @@ subprojects {
 }
 
 ext {
-  releaseFileName = "${projectName}-v${version}.zip"
+  releaseFileName = "${zzName}-v${version}.zip"
 }
 
 /*
@@ -76,8 +75,7 @@ ext {
  * be checked everytime when it is updated (otherwise it do not seems secure)
  * To avoid using it we rely on manual version check
  */
-def requiredGradleVersion = "8.3"
-if ("$gradle.gradleVersion" != "$requiredGradleVersion")
-  throw new RuntimeException("Running gradle version $gradle.gradleVersion, required $requiredGradleVersion");
+if ("$gradle.gradleVersion" != zzRequiredGradleVersion)
+  throw new RuntimeException("Running gradle version $gradle.gradleVersion, required $zzRequiredGradleVersion");
 
 println "Version: ${version}"
