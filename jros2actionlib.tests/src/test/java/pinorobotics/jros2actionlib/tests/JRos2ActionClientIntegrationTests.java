@@ -55,8 +55,12 @@ public class JRos2ActionClientIntegrationTests {
                 new XExec(
                                 "bash",
                                 "-c",
-                                ". ws2/install/setup.sh &&"
-                                        + " ws2/build/action_tutorials_cpp/fibonacci_action_server")
+                                """
+                                cd ws2/out.%s &&
+                                COLCON_CURRENT_PREFIX=./install source install/setup.sh &&
+                                build/action_tutorials_cpp/fibonacci_action_server
+                                """
+                                        .formatted(System.getenv("ROS_DISTRO")))
                         .start()
                         .forwardOutputAsync(true);
         client = new JRos2ClientFactory().createClient();

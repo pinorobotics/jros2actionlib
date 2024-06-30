@@ -13,3 +13,13 @@ colcon build
 . install/setup.zsh
 ros2 run action_tutorials_cpp fibonacci_action_server
 ```
+
+# Setup
+
+**jros2actionlib** tests expect "build" and "install" folders to be placed under "out.<ROS_DISTRO>" folder.
+
+``` bash
+mkdir out.$ROS_DISTRO
+mv -rf build out.$ROS_DISTRO
+mv -rf install out.$ROS_DISTRO
+```

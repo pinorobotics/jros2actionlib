@@ -23,7 +23,8 @@
  * <p>For usage examples see <a href="http://pinoweb.freetzi.com/jrosactionlib">Documentation</a>
  *
  * @see <a href="https://github.com/pinorobotics/jros2actionlib">GitHub repository</a>
- * @see <a href="https://github.com/pinorobotics/jros2actionlib/releases">Download</a>
+ * @see <a
+ *     href="https://github.com/pinorobotics/jros2actionlib/blob/main/jros2actionlib/release/CHANGELOG.md">Releases</a>
  * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
  *     Actions</a>
  * @see <a href="http://design.ros2.org/articles/actions.html">ROS2 Actions Implementation</a>

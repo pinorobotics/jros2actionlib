@@ -1,3 +1,4 @@
+out.*
 **/build
 **/.catkin_tools
 **/devel
