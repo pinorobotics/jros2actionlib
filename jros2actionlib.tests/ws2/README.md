@@ -19,6 +19,7 @@ ros2 run action_tutorials_cpp fibonacci_action_server
 **jros2actionlib** tests expect "build" and "install" folders to be placed under "out.<ROS_DISTRO>" folder.
 
 ``` bash
+rm -rf out.$ROS_DISTRO
 mkdir out.$ROS_DISTRO
 mv -rf build out.$ROS_DISTRO
 mv -rf install out.$ROS_DISTRO

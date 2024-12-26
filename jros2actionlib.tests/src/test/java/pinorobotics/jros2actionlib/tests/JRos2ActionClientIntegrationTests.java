@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import id.jros2client.JRos2Client;
 import id.jros2client.JRos2ClientFactory;
-import id.jrosmessages.std_msgs.Int32Message;
 import id.xfunction.ResourceUtils;
 import id.xfunction.lang.XExec;
 import id.xfunction.lang.XProcess;
@@ -78,7 +77,7 @@ public class JRos2ActionClientIntegrationTests {
 
     @Test
     public void test_sendGoal() throws Exception {
-        var goal = new FibonacciGoalMessage().withOrder(new Int32Message().withData(13));
+        var goal = new FibonacciGoalMessage().withOrder(13);
         var result = actionClient.sendGoalAsync(goal).get();
         System.out.println(result);
         assertEquals(resourceUtils.readResource("test_sendGoal"), result.toString());
