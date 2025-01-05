@@ -17,6 +17,7 @@
  */
 package pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs;
 
+import id.jrosmessages.MessageDescriptor;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalMessage;
@@ -26,17 +27,20 @@ public class FibonacciActionDefinition
         implements Action2Definition<FibonacciGoalMessage, FibonacciResultMessage> {
 
     @Override
-    public Class<? extends Action2GoalMessage<FibonacciGoalMessage>> getActionGoalMessage() {
-        return FibonacciActionGoalMessage.class;
+    public MessageDescriptor<? extends Action2GoalMessage<FibonacciGoalMessage>>
+            getActionGoalMessage() {
+        return new MessageDescriptor<>(FibonacciActionGoalMessage.class);
     }
 
     @Override
-    public Class<? extends Action2ResultMessage<FibonacciResultMessage>> getActionResultMessage() {
-        return FibonacciActionResultMessage.class;
+    public MessageDescriptor<? extends Action2ResultMessage<FibonacciResultMessage>>
+            getActionResultMessage() {
+        return new MessageDescriptor<>(FibonacciActionResultMessage.class);
     }
 
     @Override
-    public Class<? extends Action2GetResultRequestMessage> getActionResultRequestMessage() {
-        return FibonacciActionGetResultRequestMessage.class;
+    public MessageDescriptor<? extends Action2GetResultRequestMessage>
+            getActionResultRequestMessage() {
+        return new MessageDescriptor<>(FibonacciActionGetResultRequestMessage.class);
     }
 }

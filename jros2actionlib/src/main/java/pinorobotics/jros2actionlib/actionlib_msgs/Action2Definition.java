@@ -18,6 +18,7 @@
 package pinorobotics.jros2actionlib.actionlib_msgs;
 
 import id.jrosmessages.Message;
+import id.jrosmessages.MessageDescriptor;
 import pinorobotics.jrosactionlib.msgs.ActionDefinition;
 import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 
@@ -32,11 +33,11 @@ public interface Action2Definition<G extends Message, R extends Message>
 
     /** {@inheritDoc} */
     @Override
-    Class<? extends Action2GoalMessage<G>> getActionGoalMessage();
+    MessageDescriptor<? extends Action2GoalMessage<G>> getActionGoalMessage();
 
     /** {@inheritDoc} */
     @Override
-    Class<? extends Action2ResultMessage<R>> getActionResultMessage();
+    MessageDescriptor<? extends Action2ResultMessage<R>> getActionResultMessage();
 
     /**
      * In ROS2 Action Server does not return the {@link ActionResultMessage} after goal completes.
@@ -47,5 +48,5 @@ public interface Action2Definition<G extends Message, R extends Message>
      * <p>This method returns type of the {@link Message} which is used to request the goals for an
      * Action described by this definition
      */
-    Class<? extends Action2GetResultRequestMessage> getActionResultRequestMessage();
+    MessageDescriptor<? extends Action2GetResultRequestMessage> getActionResultRequestMessage();
 }

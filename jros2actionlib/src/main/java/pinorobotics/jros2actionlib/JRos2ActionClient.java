@@ -18,6 +18,7 @@
 package pinorobotics.jros2actionlib;
 
 import id.jros2client.JRos2Client;
+import id.jroscommon.RosName;
 import id.jrosmessages.Message;
 import id.xfunction.logging.XLogger;
 import id.xfunction.retry.RetryException;
@@ -39,9 +40,6 @@ import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
  *
  * @param <G> message type used to represent a goal
  * @param <R> message type sent by ActionServer upon goal completion
- * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
- *     Actions</a>
- * @see <a href="http://design.ros2.org/articles/actions.html">ROS2 Actions Implementation</a>
  * @author aeon_flux aeon_flux@eclipso.ch
  */
 public class JRos2ActionClient<G extends Message, R extends Message>
@@ -58,7 +56,7 @@ public class JRos2ActionClient<G extends Message, R extends Message>
             JRos2ServiceClient<Action2GetResultRequestMessage, Action2ResultMessage<R>>
                     serviceClient,
             Action2Definition<G, R> actionDefinition,
-            String actionServerName) {
+            RosName actionServerName) {
         super(client, actionDefinition, actionServerName);
         this.serviceClient = serviceClient;
         this.actionDefinition = actionDefinition;
@@ -93,7 +91,11 @@ public class JRos2ActionClient<G extends Message, R extends Message>
         LOGGER.info("Calling Get Result for goal with id {0}", goalId);
         try {
             var getResultRequest =
-                    actionDefinition.getActionResultRequestMessage().getConstructor().newInstance();
+                    actionDefinition
+                            .getActionResultRequestMessage()
+                            .getMessageClass()
+                            .getConstructor()
+                            .newInstance();
             getResultRequest.withGoalId(goalId);
             var result = serviceClient.sendRequestAsync(getResultRequest).get();
             switch (result.getStatus()) {

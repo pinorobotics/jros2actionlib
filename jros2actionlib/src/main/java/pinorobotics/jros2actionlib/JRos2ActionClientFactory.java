@@ -19,12 +19,14 @@ package pinorobotics.jros2actionlib;
 
 import id.jros2client.JRos2Client;
 import id.jrosclient.RosVersion;
+import id.jroscommon.RosName;
 import id.jrosmessages.Message;
+import id.jrosmessages.MessageDescriptor;
 import id.xfunction.Preconditions;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2ResultMessage;
-import pinorobotics.jros2services.JRos2ServiceClientFactory;
+import pinorobotics.jros2services.JRos2ServicesFactory;
 import pinorobotics.jrosservices.msgs.ServiceDefinition;
 
 /**
@@ -48,23 +50,25 @@ public class JRos2ActionClientFactory {
         Preconditions.isTrue(
                 client.getSupportedRosVersion().contains(RosVersion.ROS2), "Requires ROS2 client");
 
-        var factory = new JRos2ServiceClientFactory();
+        var factory = new JRos2ServicesFactory();
         var serviceDefinition =
                 new ServiceDefinition<Action2GetResultRequestMessage, Action2ResultMessage<R>>() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public Class<Action2GetResultRequestMessage> getServiceRequestMessage() {
-                        return (Class<Action2GetResultRequestMessage>)
+                    public MessageDescriptor<Action2GetResultRequestMessage>
+                            getServiceRequestMessage() {
+                        return (MessageDescriptor<Action2GetResultRequestMessage>)
                                 actionDefinition.getActionResultRequestMessage();
                     }
 
                     @Override
-                    public Class<Action2ResultMessage<R>> getServiceResponseMessage() {
-                        return (Class<Action2ResultMessage<R>>)
+                    public MessageDescriptor<Action2ResultMessage<R>> getServiceResponseMessage() {
+                        return (MessageDescriptor<Action2ResultMessage<R>>)
                                 actionDefinition.getActionResultMessage();
                     }
                 };
         var serviceClient = factory.createClient(client, serviceDefinition, actionServerName);
-        return new JRos2ActionClient<>(client, serviceClient, actionDefinition, actionServerName);
+        return new JRos2ActionClient<>(
+                client, serviceClient, actionDefinition, new RosName(actionServerName));
     }
 }

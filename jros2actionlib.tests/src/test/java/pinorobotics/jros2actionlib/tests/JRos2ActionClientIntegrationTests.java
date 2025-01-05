@@ -39,7 +39,7 @@ import pinorobotics.jrosactionlib.JRosActionClient;
 public class JRos2ActionClientIntegrationTests {
 
     private static final ResourceUtils resourceUtils = new ResourceUtils();
-    private static JRos2Client client;
+    private JRos2Client client;
     private JRosActionClient<FibonacciGoalMessage, FibonacciResultMessage> actionClient;
     private XProcess service;
 

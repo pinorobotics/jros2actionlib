@@ -69,4 +69,14 @@ public class FibonacciActionGoalMessage implements Action2GoalMessage<FibonacciG
                 "goal_id", goal_id,
                 "goal", goal);
     }
+
+    @Override
+    public FibonacciGoalMessage getGoal() {
+        return goal;
+    }
+
+    @Override
+    public Action2GoalIdMessage getGoalId() {
+        return goal_id;
+    }
 }

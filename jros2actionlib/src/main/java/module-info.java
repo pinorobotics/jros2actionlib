@@ -25,9 +25,12 @@
  * @see <a href="https://github.com/pinorobotics/jros2actionlib">GitHub repository</a>
  * @see <a
  *     href="https://github.com/pinorobotics/jros2actionlib/blob/main/jros2actionlib/release/CHANGELOG.md">Releases</a>
+ * @see <a href="http://pinoweb.freetzi.com/jrosactionlib">Documentation</a>
  * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
  *     Actions</a>
  * @see <a href="http://design.ros2.org/articles/actions.html">ROS2 Actions Implementation</a>
+ * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
+ *     Actions</a>
  * @author aeon_flux aeon_flux@eclipso.ch
  */
 module jros2actionlib {
@@ -37,6 +40,8 @@ module jros2actionlib {
     requires id.xfunction;
     requires jrosmessages;
     requires jros2services;
+    requires jrosservices;
+    requires jroscommon;
 
     exports pinorobotics.jros2actionlib;
     exports pinorobotics.jros2actionlib.actionlib_msgs;
