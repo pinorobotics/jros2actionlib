@@ -37,4 +37,9 @@ public class FibonacciActionGetResultRequestMessage implements Action2GetResultR
         this.goal_id = goal_id;
         return this;
     }
+
+    @Override
+    public Action2GoalIdMessage getGoalId() {
+        return goal_id;
+    }
 }

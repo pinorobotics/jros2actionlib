@@ -67,4 +67,10 @@ public class FibonacciActionResultMessage implements Action2ResultMessage<Fibona
     public FibonacciResultMessage getResult() {
         return result;
     }
+
+    @Override
+    public FibonacciActionResultMessage withGoalId(StatusType goal_id) {
+        status = (byte) goal_id.ordinal();
+        return this;
+    }
 }

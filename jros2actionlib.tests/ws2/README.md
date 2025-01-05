@@ -3,7 +3,7 @@ Based on [Writing an action server and client](https://docs.ros.org/en/galactic/
 # Prereqs
 
 ``` bash
-sudo apt install ros-humble-action-tutorials-cpp
+sudo apt install ros-humble-action-tutorials-cpp --ros-args --log-level DEBUG
 ```
 
 # Build
@@ -11,7 +11,7 @@ sudo apt install ros-humble-action-tutorials-cpp
 ```
 colcon build
 . install/setup.zsh
-ros2 run action_tutorials_cpp fibonacci_action_server
+ros2 run action_tutorials_cpp fibonacci_action_server --ros-args --log-level DEBUG
 ```
 
 # Setup

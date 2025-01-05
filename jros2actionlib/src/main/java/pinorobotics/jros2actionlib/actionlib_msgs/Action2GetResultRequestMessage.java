@@ -32,4 +32,6 @@ import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 public interface Action2GetResultRequestMessage extends Message {
 
     Action2GetResultRequestMessage withGoalId(Action2GoalIdMessage goal_id);
+
+    Action2GoalIdMessage getGoalId();
 }
