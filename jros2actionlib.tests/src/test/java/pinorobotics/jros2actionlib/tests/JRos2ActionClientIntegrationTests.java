@@ -30,14 +30,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pinorobotics.jros2actionlib.JRos2ActionClientFactory;
+import pinorobotics.jros2actionlib.JRos2ActionFactory;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciActionDefinition;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciGoalMessage;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResultMessage;
 import pinorobotics.jrosactionlib.JRosActionClient;
 
+/**
+ * @author aeon_flux aeon_flux@eclipso.ch
+ */
 public class JRos2ActionClientIntegrationTests {
-
     private static final ResourceUtils resourceUtils = new ResourceUtils();
     private JRos2Client client;
     private JRosActionClient<FibonacciGoalMessage, FibonacciResultMessage> actionClient;
@@ -64,7 +66,7 @@ public class JRos2ActionClientIntegrationTests {
                         .forwardOutputAsync(true);
         client = new JRos2ClientFactory().createClient();
         actionClient =
-                new JRos2ActionClientFactory()
+                new JRos2ActionFactory()
                         .createClient(client, new FibonacciActionDefinition(), "fibonacci");
     }
 

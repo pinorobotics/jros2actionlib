@@ -21,6 +21,7 @@ public:
   explicit FibonacciActionClient(const rclcpp::NodeOptions & options)
   : Node("fibonacci_action_client", options)
   {
+    this->declare_parameter("order", 10);
     this->client_ptr_ = rclcpp_action::create_client<Fibonacci>(
       this,
       "fibonacci");
@@ -42,7 +43,9 @@ public:
     }
 
     auto goal_msg = Fibonacci::Goal();
-    goal_msg.order = 10;
+    int order = this->get_parameter("order").as_int();
+    RCLCPP_INFO(this->get_logger(), "order=%d", order);
+    goal_msg.order = order;
 
     RCLCPP_INFO(this->get_logger(), "Sending goal");
 

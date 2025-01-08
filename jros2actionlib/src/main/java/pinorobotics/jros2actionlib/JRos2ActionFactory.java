@@ -34,7 +34,7 @@ import pinorobotics.jrosservices.msgs.ServiceDefinition;
  *
  * @author aeon_flux aeon_flux@eclipso.ch
  */
-public class JRos2ActionClientFactory {
+public class JRos2ActionFactory {
 
     /**
      * Create client for ROS2 Action Server
@@ -70,5 +70,30 @@ public class JRos2ActionClientFactory {
         var serviceClient = factory.createClient(client, serviceDefinition, actionServerName);
         return new JRos2ActionClient<>(
                 client, serviceClient, actionDefinition, new RosName(actionServerName));
+    }
+
+    /**
+     * Create ROS2 Action Server
+     *
+     * <p>Action Server needs to be started explicitly with {@link JRos2ActionServer#start()}.
+     *
+     * @param client ROS2 client
+     * @param actionDefinition message type definitions for an action server
+     * @param actionServerName name of the action server which will execute the actions
+     * @param actionHandler action handler which will process all incoming ROS actions
+     * @param <G> message type used to represent a goal
+     * @param <R> message type sent by ActionServer upon goal completion
+     */
+    public <G extends Message, R extends Message> JRos2ActionServer<G, R> createActionServer(
+            JRos2Client client,
+            Action2Definition<G, R> actionDefinition,
+            String actionServerName,
+            ActionHandler<G, R> actionHandler) {
+        return new JRos2ActionServer<>(
+                client,
+                new JRos2ServicesFactory(),
+                actionDefinition,
+                new RosName(actionServerName),
+                actionHandler);
     }
 }

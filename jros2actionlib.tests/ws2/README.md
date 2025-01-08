@@ -21,6 +21,6 @@ ros2 run action_tutorials_cpp fibonacci_action_server --ros-args --log-level DEB
 ``` bash
 rm -rf out.$ROS_DISTRO
 mkdir out.$ROS_DISTRO
-mv -rf build out.$ROS_DISTRO
-mv -rf install out.$ROS_DISTRO
+cp -rf build out.$ROS_DISTRO
+cp -rf install out.$ROS_DISTRO
 ```

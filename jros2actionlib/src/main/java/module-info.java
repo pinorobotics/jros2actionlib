@@ -45,4 +45,8 @@ module jros2actionlib {
 
     exports pinorobotics.jros2actionlib;
     exports pinorobotics.jros2actionlib.actionlib_msgs;
+    exports pinorobotics.jros2actionlib.impl.msgs.action_msgs to
+            id.kineticstreamer;
+    exports pinorobotics.jros2actionlib.impl.msgs.jros_msgs to
+            id.kineticstreamer;
 }
