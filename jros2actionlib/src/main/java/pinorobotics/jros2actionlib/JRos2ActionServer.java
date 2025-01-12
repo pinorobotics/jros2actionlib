@@ -93,6 +93,7 @@ public class JRos2ActionServer<G extends Message, R extends Message> extends Ide
 
     @Override
     protected void onStart() {
+        LOGGER.fine("Start action server {0}", actionServerName);
         startStatusPublisher();
         startFeedbackPublisher();
         startCancelGoalService();
@@ -102,6 +103,7 @@ public class JRos2ActionServer<G extends Message, R extends Message> extends Ide
 
     @Override
     protected void onClose() {
+        LOGGER.fine("Stop action server {0}", actionServerName);
         statusPublisher.close();
         feedbackPublisher.close();
         cancelGoalService.close();
@@ -201,16 +203,16 @@ public class JRos2ActionServer<G extends Message, R extends Message> extends Ide
         var res = pendingActions.get(uuid);
         var resultMessage = newResultMessage();
         if (res == null) {
-            resultMessage.withGoalId(StatusType.UNKNOWN);
+            resultMessage.withStatus(StatusType.UNKNOWN);
         } else if (res.isCancelled()) {
-            resultMessage.withGoalId(StatusType.CANCELED);
+            resultMessage.withStatus(StatusType.CANCELED);
         } else if (res.isCompletedExceptionally()) {
-            resultMessage.withGoalId(StatusType.ABORTED);
+            resultMessage.withStatus(StatusType.ABORTED);
         } else if (res.isDone()) {
-            resultMessage.withGoalId(StatusType.SUCCEEDED);
+            resultMessage.withStatus(StatusType.SUCCEEDED);
             resultMessage.withResult(res.get());
         } else {
-            resultMessage.withGoalId(StatusType.EXECUTING);
+            resultMessage.withStatus(StatusType.EXECUTING);
         }
         LOGGER.fine(
                 "Action {0} with UUID {1} has status {2}",

@@ -69,7 +69,7 @@ public class FibonacciActionResultMessage implements Action2ResultMessage<Fibona
     }
 
     @Override
-    public FibonacciActionResultMessage withGoalId(StatusType goal_id) {
+    public FibonacciActionResultMessage withStatus(StatusType goal_id) {
         status = (byte) goal_id.ordinal();
         return this;
     }

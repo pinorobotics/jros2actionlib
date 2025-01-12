@@ -87,13 +87,26 @@ public class JRos2ActionFactory {
     public <G extends Message, R extends Message> JRos2ActionServer<G, R> createActionServer(
             JRos2Client client,
             Action2Definition<G, R> actionDefinition,
-            String actionServerName,
+            RosName actionServerName,
             ActionHandler<G, R> actionHandler) {
         return new JRos2ActionServer<>(
                 client,
                 new JRos2ServicesFactory(),
                 actionDefinition,
-                new RosName(actionServerName),
+                actionServerName,
                 actionHandler);
+    }
+
+    /**
+     * Simplified version of {@link #createActionServer(JRos2Client, Action2Definition, RosName,
+     * ActionHandler)} where topic is converted to {@link RosName}
+     */
+    public <G extends Message, R extends Message> JRos2ActionServer<G, R> createActionServer(
+            JRos2Client client,
+            Action2Definition<G, R> actionDefinition,
+            String actionServerName,
+            ActionHandler<G, R> actionHandler) {
+        return createActionServer(
+                client, actionDefinition, new RosName(actionServerName), actionHandler);
     }
 }
