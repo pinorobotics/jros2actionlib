@@ -1,3 +1,14 @@
+# Version 5
+
+- Extract implementation logic to private package
+- Fix withGoalId method name
+- Add support to run ROS Action server from Java
+- Update to the latest changes in jros modules (RosName, MessageDescriptor)
+- Update Action definition interfaces to expose GoalId they contain (mainly to support Action Services inside jros2actionlib in future)
+- Replace test message Int32Message fields with int
+
+[jros2actionlib-v5.0.zip](https://github.com/pinorobotics/jros2actionlib/raw/main/jros2actionlib/release/jros2actionlib-v5.0.zip)
+
 # Version 4
 
 - Updating to jros2services v6 to support Jazzy

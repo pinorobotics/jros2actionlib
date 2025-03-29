@@ -14,7 +14,7 @@ Gradle:
 
 ```
 dependencies {
-  implementation 'io.github.pinorobotics:jros2actionlib:4.0'
+  implementation 'io.github.pinorobotics:jros2actionlib:5.0'
 }
 ```
 
