@@ -26,10 +26,9 @@
  * @see <a
  *     href="https://github.com/pinorobotics/jros2actionlib/blob/main/jros2actionlib/release/CHANGELOG.md">Releases</a>
  * @see <a href="http://pinoweb.freetzi.com/jrosactionlib">Documentation</a>
- * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
- *     Actions</a>
  * @see <a href="http://design.ros2.org/articles/actions.html">ROS2 Actions Implementation</a>
- * @see <a href="https://docs.ros.org/en/galactic/Tutorials/Understanding-ROS2-Actions.html">ROS2
+ * @see <a
+ *     href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html">ROS2
  *     Actions</a>
  * @author aeon_flux aeon_flux@eclipso.ch
  */

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pinorobotics.jros2actionlib;
+package pinorobotics.jros2actionlib.impl;
 
 import id.jros2client.JRos2Client;
 import id.jroscommon.RosName;
@@ -25,6 +25,7 @@ import id.xfunction.retry.RetryException;
 import id.xfunction.retry.RetryableExecutor;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import pinorobotics.jros2actionlib.JRos2ActionFactory;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalIdMessage;
@@ -38,20 +39,21 @@ import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
  * Client which allows to interact with ROS2 Action Server. It communicates with it via a "ROS
  * Action Protocol"
  *
+ * @see JRos2ActionFactory Factory for available ROS2 action client implementations
  * @param <G> message type used to represent a goal
  * @param <R> message type sent by ActionServer upon goal completion
  * @author aeon_flux aeon_flux@eclipso.ch
  */
-public class JRos2ActionClient<G extends Message, R extends Message>
+public class JRos2ActionClientImpl<G extends Message, R extends Message>
         extends AbstractJRosActionClient<Action2GoalIdMessage, G, R> {
 
-    private static final XLogger LOGGER = XLogger.getLogger(JRos2ActionClient.class);
+    private static final XLogger LOGGER = XLogger.getLogger(JRos2ActionClientImpl.class);
     private Action2Definition<G, R> actionDefinition;
     private JRos2ServiceClient<Action2GetResultRequestMessage, Action2ResultMessage<R>>
             serviceClient;
     private RetryableExecutor executor = new RetryableExecutor();
 
-    JRos2ActionClient(
+    public JRos2ActionClientImpl(
             JRos2Client client,
             JRos2ServiceClient<Action2GetResultRequestMessage, Action2ResultMessage<R>>
                     serviceClient,

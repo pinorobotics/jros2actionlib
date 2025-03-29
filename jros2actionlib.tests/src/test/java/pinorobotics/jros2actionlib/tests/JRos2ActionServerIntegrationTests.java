@@ -78,10 +78,10 @@ public class JRos2ActionServerIntegrationTests {
                                                         "bash",
                                                         "-c",
                                                         """
-                                                cd ws2/out.%s &&
-                                                COLCON_CURRENT_PREFIX=./install source install/setup.sh &&
-                                                build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG -p order:=%d
-                                                """
+cd ws2/out.%s &&
+COLCON_CURRENT_PREFIX=./install source install/setup.sh &&
+build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG -p order:=%d
+"""
                                                                 .formatted(
                                                                         System.getenv("ROS_DISTRO"),
                                                                         seed))
@@ -142,10 +142,10 @@ public class JRos2ActionServerIntegrationTests {
 
     private String generateExpectedOutput(int order) {
         return """
-                : order=%d
-                : Sending goal
-                : Goal accepted by server, waiting for result
-                : Result received: %s """
+               : order=%d
+               : Sending goal
+               : Goal accepted by server, waiting for result
+               : Result received: %s """
                 .formatted(
                         order,
                         Arrays.stream(fibo(order))

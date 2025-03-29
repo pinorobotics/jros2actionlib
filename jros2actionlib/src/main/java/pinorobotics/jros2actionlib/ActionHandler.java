@@ -21,17 +21,22 @@ import id.jrosmessages.Message;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Service handler is responsible for executing all incoming ROS2 Action requests.
+ * Action handler is responsible for executing all incoming ROS2 Action requests.
  *
  * <p>Supposed to be implemented by the users.
  *
+ * @see <a href="https://docs.ros.org/en/humble/Tutorials/Intermediate/Creating-an-Action.html">ROS2
+ *     Action</a>
+ * @see JRos2ActionFactory Factory for available ROS2 Action implementations
+ * @param <G> message type used to represent a goal
+ * @param <R> message type sent by ActionServer upon goal completion
  * @author aeon_flux aeon_flux@eclipso.ch
  */
 @FunctionalInterface
-public interface ActionHandler<G extends Message, A extends Message> {
+public interface ActionHandler<G extends Message, R extends Message> {
     /**
      * @return Action result which will be available for the user who requested the Action only when
      *     the returned future completes
      */
-    CompletableFuture<A> execute(G request) throws Exception;
+    CompletableFuture<R> execute(G request) throws Exception;
 }
