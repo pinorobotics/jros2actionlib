@@ -35,7 +35,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import pinorobotics.jros2actionlib.ActionHandler;
-import pinorobotics.jros2actionlib.JRos2ActionFactory;
+import pinorobotics.jros2actionlib.JRos2ActionLibFactory;
 import pinorobotics.jros2actionlib.JRos2ActionServer;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
@@ -54,7 +54,7 @@ import pinorobotics.jrosactionlib.exceptions.JRosActionLibException;
 import pinorobotics.jrosservices.msgs.ServiceDefinition;
 
 /**
- * @see JRos2ActionFactory factory to create Action Server
+ * @see JRos2ActionLibFactory factory to create Action Server
  * @param <G> message type used to represent a goal
  * @param <R> message type sent by ActionServer upon goal completion
  * @author aeon_flux aeon_flux@eclipso.ch

@@ -20,7 +20,7 @@ package pinorobotics.jros2actionlib;
 import id.jrosmessages.Message;
 
 /**
- * @see JRos2ActionFactory factory to create Action Server
+ * @see JRos2ActionLibFactory factory to create Action Server
  * @param <G> message type used to represent a goal
  * @param <R> message type sent by ActionServer upon goal completion
  * @author aeon_flux aeon_flux@eclipso.ch

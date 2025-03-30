@@ -39,7 +39,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pinorobotics.jros2actionlib.ActionHandler;
-import pinorobotics.jros2actionlib.JRos2ActionFactory;
+import pinorobotics.jros2actionlib.JRos2ActionLibFactory;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciActionDefinition;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciGoalMessage;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResultMessage;
@@ -49,7 +49,7 @@ import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResul
  */
 public class JRos2ActionServerIntegrationTests {
 
-    private static final JRos2ActionFactory actionFactory = new JRos2ActionFactory();
+    private static final JRos2ActionLibFactory actionFactory = new JRos2ActionLibFactory();
     private JRos2Client client;
 
     @BeforeAll
@@ -116,18 +116,19 @@ build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG 
 
     public static void test_example_from_documentation() throws IOException {
         var clientFactory = new JRos2ClientFactory();
-        var actionlibFactory = new JRos2ActionFactory();
-        Function<Integer, int[]> fibo = order -> {
-            var seq = new int[order];
-            seq[0] = 1;
-            if (seq.length == 1) return seq;
-            seq[1] = 1;
-            if (seq.length == 2) return seq;
-            for (int i = 2; i < seq.length; i++) {
-                seq[i] = seq[i - 1] + seq[i - 2];
-            }
-            return seq;
-        };
+        var actionlibFactory = new JRos2ActionLibFactory();
+        Function<Integer, int[]> fibo =
+                order -> {
+                    var seq = new int[order];
+                    seq[0] = 1;
+                    if (seq.length == 1) return seq;
+                    seq[1] = 1;
+                    if (seq.length == 2) return seq;
+                    for (int i = 2; i < seq.length; i++) {
+                        seq[i] = seq[i - 1] + seq[i - 2];
+                    }
+                    return seq;
+                };
         ActionHandler<FibonacciGoalMessage, FibonacciResultMessage> handler =
                 goal -> {
                     System.out.println("Received new goal " + goal);
@@ -138,7 +139,10 @@ build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG 
         try (var client = clientFactory.createClient();
                 var actionServer =
                         actionlibFactory.createActionServer(
-                                client, new FibonacciActionDefinition(), "jros_fibonacci", handler)) {
+                                client,
+                                new FibonacciActionDefinition(),
+                                "jros_fibonacci",
+                                handler)) {
             actionServer.start();
             System.out.println("Press Enter to stop ROS Action Server...");
             System.in.read();

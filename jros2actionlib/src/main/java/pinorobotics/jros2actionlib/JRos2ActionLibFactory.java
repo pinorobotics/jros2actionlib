@@ -37,7 +37,7 @@ import pinorobotics.jrosservices.msgs.ServiceDefinition;
  *
  * @author aeon_flux aeon_flux@eclipso.ch
  */
-public class JRos2ActionFactory {
+public class JRos2ActionLibFactory {
 
     /**
      * Create client for ROS2 Action Server
@@ -79,6 +79,8 @@ public class JRos2ActionFactory {
      * Create ROS2 Action Server
      *
      * <p>Action Server needs to be started explicitly with {@link JRos2ActionServer#start()}.
+     *
+     * <p>Returned Action Server implementation caches action results indefinitely.
      *
      * @param client ROS2 client
      * @param actionDefinition message type definitions for an action server

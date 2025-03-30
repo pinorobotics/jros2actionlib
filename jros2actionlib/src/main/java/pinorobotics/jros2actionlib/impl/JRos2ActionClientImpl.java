@@ -25,7 +25,7 @@ import id.xfunction.retry.RetryException;
 import id.xfunction.retry.RetryableExecutor;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import pinorobotics.jros2actionlib.JRos2ActionFactory;
+import pinorobotics.jros2actionlib.JRos2ActionLibFactory;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalIdMessage;
@@ -39,7 +39,7 @@ import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
  * Client which allows to interact with ROS2 Action Server. It communicates with it via a "ROS
  * Action Protocol"
  *
- * @see JRos2ActionFactory Factory for available ROS2 action client implementations
+ * @see JRos2ActionLibFactory Factory for available ROS2 action client implementations
  * @param <G> message type used to represent a goal
  * @param <R> message type sent by ActionServer upon goal completion
  * @author aeon_flux aeon_flux@eclipso.ch

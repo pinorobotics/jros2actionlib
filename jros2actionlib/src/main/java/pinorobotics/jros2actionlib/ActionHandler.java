@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @see <a href="https://docs.ros.org/en/humble/Tutorials/Intermediate/Creating-an-Action.html">ROS2
  *     Action</a>
- * @see JRos2ActionFactory Factory for available ROS2 Action implementations
+ * @see JRos2ActionLibFactory Factory for available ROS2 Action implementations
  * @param <G> message type used to represent a goal
  * @param <R> message type sent by ActionServer upon goal completion
  * @author aeon_flux aeon_flux@eclipso.ch
