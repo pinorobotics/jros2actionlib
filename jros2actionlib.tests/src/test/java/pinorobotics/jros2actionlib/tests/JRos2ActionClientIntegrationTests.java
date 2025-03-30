@@ -84,4 +84,18 @@ public class JRos2ActionClientIntegrationTests {
         System.out.println(result);
         assertEquals(resourceUtils.readResource("test_sendGoal"), result.toString());
     }
+
+    @Test
+    public void test_example_from_documentation() throws Exception {
+        var clientFactory = new JRos2ClientFactory();
+        var actionlibFactory = new JRos2ActionFactory();
+        try (var client = clientFactory.createClient();
+                var actionlibClient =
+                        actionlibFactory.createClient(
+                                client, new FibonacciActionDefinition(), "fibonacci")) {
+            var goal = new FibonacciGoalMessage().withOrder(13);
+            var result = actionlibClient.sendGoalAsync(goal).get();
+            System.out.println(result);
+        }
+    }
 }

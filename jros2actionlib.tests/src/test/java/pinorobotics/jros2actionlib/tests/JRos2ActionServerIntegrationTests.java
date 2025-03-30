@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -113,22 +114,38 @@ build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG 
         }
     }
 
-    private Consumer<String> newLogger(Path clientLogs, int seed) {
-        return line -> {
-            try {
-                Files.writeString(
-                        clientLogs.resolve("" + seed),
-                        line + "\n",
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND);
-                System.out.println(line);
-            } catch (IOException e) {
-                e.printStackTrace();
+    public static void test_example_from_documentation() throws IOException {
+        var clientFactory = new JRos2ClientFactory();
+        var actionlibFactory = new JRos2ActionFactory();
+        Function<Integer, int[]> fibo = order -> {
+            var seq = new int[order];
+            seq[0] = 1;
+            if (seq.length == 1) return seq;
+            seq[1] = 1;
+            if (seq.length == 2) return seq;
+            for (int i = 2; i < seq.length; i++) {
+                seq[i] = seq[i - 1] + seq[i - 2];
             }
+            return seq;
         };
+        ActionHandler<FibonacciGoalMessage, FibonacciResultMessage> handler =
+                goal -> {
+                    System.out.println("Received new goal " + goal);
+                    var result = new FibonacciResultMessage(fibo.apply(goal.order));
+                    System.out.println("Result " + result);
+                    return CompletableFuture.completedFuture(result);
+                };
+        try (var client = clientFactory.createClient();
+                var actionServer =
+                        actionlibFactory.createActionServer(
+                                client, new FibonacciActionDefinition(), "jros_fibonacci", handler)) {
+            actionServer.start();
+            System.out.println("Press Enter to stop ROS Action Server...");
+            System.in.read();
+        }
     }
 
-    private int[] fibo(int order) {
+    private static int[] fibo(int order) {
         var seq = new int[order];
         seq[0] = 1;
         if (seq.length == 1) return seq;
@@ -151,5 +168,24 @@ build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG 
                         Arrays.stream(fibo(order))
                                 .mapToObj(i -> "" + i)
                                 .collect(Collectors.joining(" ")));
+    }
+
+    private Consumer<String> newLogger(Path clientLogs, int seed) {
+        return line -> {
+            try {
+                Files.writeString(
+                        clientLogs.resolve("" + seed),
+                        line + "\n",
+                        StandardOpenOption.CREATE,
+                        StandardOpenOption.APPEND);
+                System.out.println(line);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+    }
+
+    public static void main(String[] args) throws IOException {
+        test_example_from_documentation();
     }
 }
