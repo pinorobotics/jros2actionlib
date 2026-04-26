@@ -78,7 +78,7 @@ public class JRos2ActionServerIntegrationTests {
                                         new XExec(
                                                         "bash",
                                                         "-c",
-                                                        """
+"""
 cd ws2/out.%s &&
 COLCON_CURRENT_PREFIX=./install source install/setup.sh &&
 build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG -p order:=%d
@@ -163,10 +163,11 @@ build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG 
 
     private String generateExpectedOutput(int order) {
         return """
-               : order=%d
-               : Sending goal
-               : Goal accepted by server, waiting for result
-               : Result received: %s """
+        : order=%d
+        : Sending goal
+        : Goal accepted by server, waiting for result
+        : Result received: %s\
+        """
                 .formatted(
                         order,
                         Arrays.stream(fibo(order))
