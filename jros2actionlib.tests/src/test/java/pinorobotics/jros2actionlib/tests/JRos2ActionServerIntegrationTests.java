@@ -19,30 +19,30 @@ package pinorobotics.jros2actionlib.tests;
 
 import id.jros2client.JRos2Client;
 import id.jros2client.JRos2ClientFactory;
-import id.xfunction.lang.XExec;
-import id.xfunction.lang.XProcess;
 import id.xfunction.logging.XLogger;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Random;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import pinorobotics.jros2actionlib.ActionHandler;
 import pinorobotics.jros2actionlib.JRos2ActionLibFactory;
+import pinorobotics.jros2actionlib.tests.ClientExecutor.Result;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciActionDefinition;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciGoalMessage;
 import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResultMessage;
+import pinorobotics.jros2actionlib.tests.clientexecutors.JRos2ActionClientExecutor;
+import pinorobotics.jros2actionlib.tests.clientexecutors.ThirdpartyClientExecutor;
 
 /**
  * @author aeon_flux aeon_flux@eclipso.ch
@@ -50,6 +50,7 @@ import pinorobotics.jros2actionlib.tests.actionlib_tutorials_msgs.FibonacciResul
 public class JRos2ActionServerIntegrationTests {
 
     private static final JRos2ActionLibFactory actionFactory = new JRos2ActionLibFactory();
+    private static final String ACTION_SERVER_NAME = "fibonacci";
     private JRos2Client client;
 
     @BeforeAll
@@ -67,50 +68,33 @@ public class JRos2ActionServerIntegrationTests {
         client.close();
     }
 
-    @Test
-    public void test_happy() throws Exception {
-        var seeds = new Random().ints(13, 1, 20).distinct().mapToObj(Integer::valueOf).toList();
-        var clientLogs = Files.createTempDirectory("jros2actionlib");
-        var clientProcs =
-                seeds.stream()
-                        .map(
-                                seed ->
-                                        new XExec(
-                                                        "bash",
-                                                        "-c",
-"""
-cd ws2/out.%s &&
-COLCON_CURRENT_PREFIX=./install source install/setup.sh &&
-build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG -p order:=%d
-"""
-                                                                .formatted(
-                                                                        System.getenv("ROS_DISTRO"),
-                                                                        seed))
-                                                .start()
-                                                .stderrAsync(newLogger(clientLogs, seed)))
-                        .toList();
+    static Stream<ClientExecutor> dataProvider() {
+        return Stream.of(
+                new ThirdpartyClientExecutor(20),
+                new JRos2ActionClientExecutor(1, ACTION_SERVER_NAME));
+    }
 
+    @ParameterizedTest
+    @MethodSource("dataProvider")
+    public void test_happy(ClientExecutor clientExecutor) throws Exception {
         ActionHandler<FibonacciGoalMessage, FibonacciResultMessage> handler =
                 action ->
                         CompletableFuture.completedFuture(
-                                new FibonacciResultMessage(fibo(action.order)));
+                                new FibonacciResultMessage().withSequence(fibo(action.order)));
         try (var actionServer =
                 actionFactory.createActionServer(
-                        client, new FibonacciActionDefinition(), "fibonacci", handler)) {
+                        client, new FibonacciActionDefinition(), ACTION_SERVER_NAME, handler)) {
             actionServer.start();
-            for (int i = 0; i < seeds.size(); i++) {
-                var proc = clientProcs.get(i);
-                Assertions.assertEquals(0, proc.await());
-                var actualOutput =
-                        Files.readAllLines(clientLogs.resolve("" + seeds.get(i))).stream()
-                                .filter(l -> l.startsWith("[INFO]"))
-                                .filter(l -> !l.contains("waiting for service to appear"))
-                                .map(l -> l.replaceAll("\\[.*\\]", "").strip())
-                                .collect(Collectors.joining("\n"));
-                Assertions.assertEquals(generateExpectedOutput(seeds.get(i)), actualOutput);
+            List<Future<Result>> futures = clientExecutor.executeClientsAsync();
+
+            for (Future<Result> future : futures) {
+                var result = future.get();
+                String actualOutput = result.output();
+                int seed = result.seed();
+                Assertions.assertEquals(generateExpectedOutput(seed), actualOutput);
             }
         } finally {
-            clientProcs.forEach(XProcess::destroyAllForcibly);
+            clientExecutor.close();
         }
     }
 
@@ -132,7 +116,7 @@ build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG 
         ActionHandler<FibonacciGoalMessage, FibonacciResultMessage> handler =
                 goal -> {
                     System.out.println("Received new goal " + goal);
-                    var result = new FibonacciResultMessage(fibo.apply(goal.order));
+                    var result = new FibonacciResultMessage().withSequence(fibo.apply(goal.order));
                     System.out.println("Result " + result);
                     return CompletableFuture.completedFuture(result);
                 };
@@ -173,21 +157,6 @@ build/action_tutorials_cpp/fibonacci_action_client --ros-args --log-level DEBUG 
                         Arrays.stream(fibo(order))
                                 .mapToObj(i -> "" + i)
                                 .collect(Collectors.joining(" ")));
-    }
-
-    private Consumer<String> newLogger(Path clientLogs, int seed) {
-        return line -> {
-            try {
-                Files.writeString(
-                        clientLogs.resolve("" + seed),
-                        line + "\n",
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND);
-                System.out.println(line);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
     }
 
     public static void main(String[] args) throws IOException {

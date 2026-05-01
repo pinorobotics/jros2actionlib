@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 jrosactionlib project
+ * Copyright 2021 jrosactionlib project
  * 
  * Website: https://github.com/pinorobotics/jros2actionlib
  * 
@@ -23,24 +23,32 @@ import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2ResultMessage;
 
+/** Definition for action_tutorials_interfaces/action/Fibonacci */
 public class FibonacciActionDefinition
         implements Action2Definition<FibonacciGoalMessage, FibonacciResultMessage> {
+    private static final MessageDescriptor<? extends Action2GoalMessage<FibonacciGoalMessage>>
+            GOAL_MESSAGE_DESCRIPTOR = new MessageDescriptor<>(FibonacciActionGoalMessage.class);
+    private static final MessageDescriptor<? extends Action2ResultMessage<FibonacciResultMessage>>
+            RESULT_MESSAGE_DESCRIPTOR = new MessageDescriptor<>(FibonacciActionResultMessage.class);
+    private static final MessageDescriptor<? extends Action2GetResultRequestMessage>
+            RESULT_REQUEST_MESSAGE_DESCRIPTOR =
+                    new MessageDescriptor<>(FibonacciActionGetResultRequestMessage.class);
 
     @Override
     public MessageDescriptor<? extends Action2GoalMessage<FibonacciGoalMessage>>
             getActionGoalMessage() {
-        return new MessageDescriptor<>(FibonacciActionGoalMessage.class);
+        return GOAL_MESSAGE_DESCRIPTOR;
     }
 
     @Override
     public MessageDescriptor<? extends Action2ResultMessage<FibonacciResultMessage>>
             getActionResultMessage() {
-        return new MessageDescriptor<>(FibonacciActionResultMessage.class);
+        return RESULT_MESSAGE_DESCRIPTOR;
     }
 
     @Override
     public MessageDescriptor<? extends Action2GetResultRequestMessage>
             getActionResultRequestMessage() {
-        return new MessageDescriptor<>(FibonacciActionGetResultRequestMessage.class);
+        return RESULT_REQUEST_MESSAGE_DESCRIPTOR;
     }
 }

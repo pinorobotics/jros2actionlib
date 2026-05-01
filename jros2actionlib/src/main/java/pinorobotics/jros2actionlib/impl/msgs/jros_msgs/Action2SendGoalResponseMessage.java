@@ -51,6 +51,10 @@ public class Action2SendGoalResponseMessage implements Message {
         return this;
     }
 
+    public StatusType getStatus() {
+        return StatusType.values()[status];
+    }
+
     public Action2SendGoalResponseMessage withTimestamp(Time time) {
         this.timestamp = time;
         return this;

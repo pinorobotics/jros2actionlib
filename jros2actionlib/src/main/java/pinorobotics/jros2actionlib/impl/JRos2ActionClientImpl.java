@@ -20,20 +20,27 @@ package pinorobotics.jros2actionlib.impl;
 import id.jros2client.JRos2Client;
 import id.jroscommon.RosName;
 import id.jrosmessages.Message;
-import id.xfunction.logging.XLogger;
+import id.jrosmessages.MessageDescriptor;
 import id.xfunction.retry.RetryException;
 import id.xfunction.retry.RetryableExecutor;
 import java.time.Duration;
+import java.util.EnumSet;
 import java.util.concurrent.CompletableFuture;
 import pinorobotics.jros2actionlib.JRos2ActionLibFactory;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalIdMessage;
+import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2ResultMessage;
+import pinorobotics.jros2actionlib.actionlib_msgs.StatusType;
+import pinorobotics.jros2actionlib.impl.msgs.jros_msgs.Action2SendGoalResponseMessage;
 import pinorobotics.jros2services.JRos2ServiceClient;
+import pinorobotics.jros2services.JRos2ServicesFactory;
 import pinorobotics.jrosactionlib.exceptions.JRosActionLibException;
 import pinorobotics.jrosactionlib.impl.AbstractJRosActionClient;
+import pinorobotics.jrosactionlib.msgs.ActionGoalMessage;
 import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
+import pinorobotics.jrosservices.msgs.ServiceDefinition;
 
 /**
  * Client which allows to interact with ROS2 Action Server. It communicates with it via a "ROS
@@ -47,27 +54,54 @@ import pinorobotics.jrosactionlib.msgs.ActionResultMessage;
 public class JRos2ActionClientImpl<G extends Message, R extends Message>
         extends AbstractJRosActionClient<Action2GoalIdMessage, G, R> {
 
-    private static final XLogger LOGGER = XLogger.getLogger(JRos2ActionClientImpl.class);
-    private Action2Definition<G, R> actionDefinition;
+    private static final EnumSet<StatusType> STATUS_TYPE_OK =
+            EnumSet.of(StatusType.SUCCEEDED, StatusType.ACCEPTED, StatusType.EXECUTING);
+    private JRos2Client client;
+    private JRos2ServicesFactory serviceFactory;
     private JRos2ServiceClient<Action2GetResultRequestMessage, Action2ResultMessage<R>>
-            serviceClient;
+            getResultServiceClient;
+    private JRos2ServiceClient<Action2GoalMessage<G>, Action2SendGoalResponseMessage>
+            sendGoalServiceClient;
     private RetryableExecutor executor = new RetryableExecutor();
+    private Action2Definition<G, R> action2Definition;
 
     public JRos2ActionClientImpl(
             JRos2Client client,
-            JRos2ServiceClient<Action2GetResultRequestMessage, Action2ResultMessage<R>>
-                    serviceClient,
-            Action2Definition<G, R> actionDefinition,
+            JRos2ServicesFactory serviceFactory,
+            Action2Definition<G, R> action2Definition,
             RosName actionServerName) {
-        super(client, actionDefinition, actionServerName);
-        this.serviceClient = serviceClient;
-        this.actionDefinition = actionDefinition;
+        super(action2Definition, actionServerName);
+        this.client = client;
+        this.serviceFactory = serviceFactory;
+        this.action2Definition = action2Definition;
     }
 
     /** {@inheritDoc} */
     @Override
     public CompletableFuture<R> sendGoalAsync(G arg0) throws JRosActionLibException {
         return super.sendGoalAsync(arg0);
+    }
+
+    @Override
+    protected void submitGoal(
+            Action2GoalIdMessage goalId, ActionGoalMessage<Action2GoalIdMessage, G> actionGoal) {
+        logger.info("Send goal with id={0}", goalId);
+        try {
+            Action2SendGoalResponseMessage result =
+                    sendGoalServiceClient
+                            .sendRequestAsync((Action2GoalMessage<G>) actionGoal)
+                            .get();
+            if (STATUS_TYPE_OK.contains(result.getStatus())) {
+                logger.info("Goal status id={0} status={1}", goalId, result.getStatus());
+            } else {
+                throw new JRosActionLibException(
+                        "Goal status id=%s status=%s", goalId, result.getStatus());
+            }
+        } catch (JRosActionLibException | RetryException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new JRosActionLibException(e);
+        }
     }
 
     /**
@@ -88,24 +122,78 @@ public class JRos2ActionClientImpl<G extends Message, R extends Message>
                 () -> callGetResultInternal(goalId), Duration.ofSeconds(1));
     }
 
+    @Override
+    protected void onStart() {
+        setupGetResultServiceClient();
+        setupSendGoalServiceClient();
+    }
+
+    private void setupSendGoalServiceClient() {
+        String actionGoalRawName = action2Definition.getActionGoalMessage().readNameRaw();
+        var actionGoalResultName = new RosName(actionGoalRawName + "Result");
+        var serviceResponseMessage =
+                new MessageDescriptor<>(Action2SendGoalResponseMessage.class) {
+                    @Override
+                    public RosName readName() {
+                        return actionGoalResultName;
+                    }
+                };
+        var serviceDefinition =
+                new ServiceDefinition<Action2GoalMessage<G>, Action2SendGoalResponseMessage>() {
+                    @Override
+                    public MessageDescriptor getServiceRequestMessage() {
+                        return action2Definition.getActionGoalMessage();
+                    }
+
+                    @Override
+                    public MessageDescriptor<Action2SendGoalResponseMessage>
+                            getServiceResponseMessage() {
+                        return serviceResponseMessage;
+                    }
+                };
+        sendGoalServiceClient =
+                serviceFactory.createClient(client, serviceDefinition, actionServerName.name());
+    }
+
+    private void setupGetResultServiceClient() {
+        var serviceDefinition =
+                new ServiceDefinition<Action2GetResultRequestMessage, Action2ResultMessage<R>>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public MessageDescriptor<Action2GetResultRequestMessage>
+                            getServiceRequestMessage() {
+                        return (MessageDescriptor<Action2GetResultRequestMessage>)
+                                action2Definition.getActionResultRequestMessage();
+                    }
+
+                    @Override
+                    public MessageDescriptor<Action2ResultMessage<R>> getServiceResponseMessage() {
+                        return (MessageDescriptor<Action2ResultMessage<R>>)
+                                action2Definition.getActionResultMessage();
+                    }
+                };
+        getResultServiceClient =
+                serviceFactory.createClient(client, serviceDefinition, actionServerName.name());
+    }
+
     private ActionResultMessage<R> callGetResultInternal(Action2GoalIdMessage goalId)
             throws RetryException {
-        LOGGER.info("Calling Get Result for goal with id {0}", goalId);
+        logger.info("Calling Get Result for goal with id {0}", goalId);
         try {
             var getResultRequest =
-                    actionDefinition
+                    action2Definition
                             .getActionResultRequestMessage()
                             .getMessageClass()
                             .getConstructor()
                             .newInstance();
             getResultRequest.withGoalId(goalId);
-            var result = serviceClient.sendRequestAsync(getResultRequest).get();
+            var result = getResultServiceClient.sendRequestAsync(getResultRequest).get();
             switch (result.getStatus()) {
                 case SUCCEEDED:
                     return result;
                 case ACCEPTED, EXECUTING, UNKNOWN:
                     {
-                        LOGGER.warning(
+                        logger.warning(
                                 "Result for goal with id {0} is {1}, retrying...",
                                 goalId, result.getStatus());
                         throw new RetryException();
@@ -119,5 +207,11 @@ public class JRos2ActionClientImpl<G extends Message, R extends Message>
         } catch (Exception e) {
             throw new JRosActionLibException(e);
         }
+    }
+
+    @Override
+    protected void onClose() {
+        getResultServiceClient.close();
+        sendGoalServiceClient.close();
     }
 }

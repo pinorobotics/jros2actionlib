@@ -27,6 +27,7 @@ open module jros2actionlib.tests {
     requires org.junit.jupiter.api;
     requires jrosclient;
     requires jrosactionlib;
+    requires org.junit.jupiter.params;
 
     exports pinorobotics.jros2actionlib.tests;
 }

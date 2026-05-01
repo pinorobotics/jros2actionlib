@@ -18,19 +18,15 @@
 package pinorobotics.jros2actionlib;
 
 import id.jros2client.JRos2Client;
-import id.jrosclient.RosVersion;
 import id.jroscommon.RosName;
+import id.jroscommon.RosVersion;
 import id.jrosmessages.Message;
-import id.jrosmessages.MessageDescriptor;
 import id.xfunction.Preconditions;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2Definition;
-import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
-import pinorobotics.jros2actionlib.actionlib_msgs.Action2ResultMessage;
 import pinorobotics.jros2actionlib.impl.JRos2ActionClientImpl;
 import pinorobotics.jros2actionlib.impl.JRos2ActionServerImpl;
 import pinorobotics.jros2services.JRos2ServicesFactory;
 import pinorobotics.jrosactionlib.JRosActionClient;
-import pinorobotics.jrosservices.msgs.ServiceDefinition;
 
 /**
  * Factory methods of <b>jros2actionlib</b> module.
@@ -49,30 +45,22 @@ public class JRos2ActionLibFactory {
      * @param <R> message type sent by ActionServer upon goal completion
      */
     public <G extends Message, R extends Message> JRosActionClient<G, R> createClient(
-            JRos2Client client, Action2Definition<G, R> actionDefinition, String actionServerName) {
+            JRos2Client client,
+            Action2Definition<G, R> actionDefinition,
+            RosName actionServerName) {
         Preconditions.isTrue(
                 client.getSupportedRosVersion().contains(RosVersion.ROS2), "Requires ROS2 client");
-
         var factory = new JRos2ServicesFactory();
-        var serviceDefinition =
-                new ServiceDefinition<Action2GetResultRequestMessage, Action2ResultMessage<R>>() {
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public MessageDescriptor<Action2GetResultRequestMessage>
-                            getServiceRequestMessage() {
-                        return (MessageDescriptor<Action2GetResultRequestMessage>)
-                                actionDefinition.getActionResultRequestMessage();
-                    }
+        return new JRos2ActionClientImpl<G, R>(client, factory, actionDefinition, actionServerName);
+    }
 
-                    @Override
-                    public MessageDescriptor<Action2ResultMessage<R>> getServiceResponseMessage() {
-                        return (MessageDescriptor<Action2ResultMessage<R>>)
-                                actionDefinition.getActionResultMessage();
-                    }
-                };
-        var serviceClient = factory.createClient(client, serviceDefinition, actionServerName);
-        return new JRos2ActionClientImpl<>(
-                client, serviceClient, actionDefinition, new RosName(actionServerName));
+    /**
+     * Simplified version of {@link #createClient(JRos2Client, Action2Definition, String)} where
+     * topic is converted to {@link RosName}
+     */
+    public <G extends Message, R extends Message> JRosActionClient<G, R> createClient(
+            JRos2Client client, Action2Definition<G, R> actionDefinition, String actionServerName) {
+        return createClient(client, actionDefinition, new RosName(actionServerName));
     }
 
     /**

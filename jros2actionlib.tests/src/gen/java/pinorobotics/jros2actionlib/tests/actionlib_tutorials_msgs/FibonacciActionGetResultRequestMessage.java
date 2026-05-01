@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 jrosactionlib project
+ * Copyright 2024 jrosactionlib project
  * 
  * Website: https://github.com/pinorobotics/jros2actionlib
  * 
@@ -22,7 +22,7 @@ import id.jrosmessages.RosInterfaceType;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GetResultRequestMessage;
 import pinorobotics.jros2actionlib.actionlib_msgs.Action2GoalIdMessage;
 
-/** Definition for ROS2 GoalIdMessage */
+/** Definition for action_tutorials_interfaces/Fibonacci */
 @MessageMetadata(
         name = FibonacciActionGetResultRequestMessage.NAME,
         interfaceType = RosInterfaceType.ACTION)
@@ -30,7 +30,7 @@ public class FibonacciActionGetResultRequestMessage implements Action2GetResultR
 
     static final String NAME = "action_tutorials_interfaces/FibonacciActionGetResult";
 
-    public Action2GoalIdMessage goal_id;
+    public Action2GoalIdMessage goal_id = new Action2GoalIdMessage();
 
     @Override
     public FibonacciActionGetResultRequestMessage withGoalId(Action2GoalIdMessage goal_id) {
