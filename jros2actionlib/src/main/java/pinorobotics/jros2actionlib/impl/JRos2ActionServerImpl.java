@@ -27,6 +27,7 @@ import id.jrosmessages.Message;
 import id.jrosmessages.MessageDescriptor;
 import id.jrosmessages.primitives.Time;
 import id.xfunction.Preconditions;
+import id.xfunction.logging.TracingToken;
 import id.xfunction.logging.XLogger;
 import id.xfunction.util.IdempotentService;
 import java.lang.reflect.InvocationTargetException;
@@ -62,7 +63,7 @@ import pinorobotics.jrosservices.msgs.ServiceDefinition;
 public class JRos2ActionServerImpl<G extends Message, R extends Message> extends IdempotentService
         implements JRos2ActionServer<G, R> {
 
-    private static final XLogger LOGGER = XLogger.getLogger(JRos2ActionServerImpl.class);
+    private final XLogger logger;
     private final Map<UUID, CompletableFuture<R>> pendingActions = new ConcurrentHashMap<>();
     private final JRos2Client client;
     private final JRos2ServicesFactory serviceFactory;
@@ -83,6 +84,10 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
             Action2Definition<G, R> actionDefinition,
             RosName actionServerName,
             ActionHandler<G, R> actionHandler) {
+        this.logger =
+                XLogger.getLogger(
+                        JRos2ActionServerImpl.class,
+                        new TracingToken("" + hashCode(), actionServerName.name()));
         this.client = client;
         this.serviceFactory = serviceFactory;
         this.actionDefinition = actionDefinition;
@@ -97,7 +102,7 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
 
     @Override
     protected void onStart() {
-        LOGGER.fine("Start action server {0}", actionServerName);
+        logger.fine("Start action server {0}", actionServerName);
         startStatusPublisher();
         startFeedbackPublisher();
         startCancelGoalService();
@@ -107,7 +112,7 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
 
     @Override
     protected void onClose() {
-        LOGGER.fine("Stop action server {0}", actionServerName);
+        logger.fine("Stop action server {0}", actionServerName);
         statusPublisher.close();
         feedbackPublisher.close();
         cancelGoalService.close();
@@ -116,8 +121,8 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
     }
 
     private void startSendGoalService() {
-        LOGGER.fine("Start sendGoal service for action {0}", actionServerName);
-        var actionGoalResultName = new RosName(actionGoalRawName + "Result");
+        logger.fine("Start sendGoal service for action {0}", actionServerName);
+        RosName actionGoalResultName = new RosName(actionGoalRawName + "Result");
         var serviceResponseMessage =
                 new MessageDescriptor<>(Action2SendGoalResponseMessage.class) {
                     @Override
@@ -145,7 +150,7 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
     }
 
     private void startCancelGoalService() {
-        LOGGER.fine("Start cancelGoal service for action {0}", actionServerName);
+        logger.fine("Start cancelGoal service for action {0}", actionServerName);
         cancelGoalService =
                 serviceFactory.createService(
                         client,
@@ -156,7 +161,7 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
     }
 
     private void startStatusPublisher() {
-        LOGGER.fine("Start status publisher for action {0}", actionServerName);
+        logger.fine("Start status publisher for action {0}", actionServerName);
         statusPublisher =
                 new TopicSubmissionPublisher<GoalStatusArrayMessage>(
                         new MessageDescriptor<>(GoalStatusArrayMessage.class), actionServerName);
@@ -166,7 +171,7 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
     }
 
     private void startFeedbackPublisher() {
-        LOGGER.fine("Start feedback publisher for action {0}", actionServerName);
+        logger.fine("Start feedback publisher for action {0}", actionServerName);
         var feedbackMessageName = new RosName(actionGoalRawName + "Feedback");
         var desc =
                 new MessageDescriptor<>(Action2FeedbackMessage.class) {
@@ -181,7 +186,7 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
     }
 
     private void startGetResultService() {
-        LOGGER.fine("Start getResult service for action {0}", actionServerName);
+        logger.fine("Start getResult service for action {0}", actionServerName);
         var serviceDefinition =
                 new ServiceDefinition<Action2GetResultRequestMessage, Action2ResultMessage<R>>() {
                     @Override
@@ -202,10 +207,10 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
 
     private Action2ResultMessage<R> onGetActionResult(Action2GetResultRequestMessage request)
             throws Exception {
-        var uuid = request.getGoalId().uuid;
-        LOGGER.fine("Request result for action {0} with UUID {1}", actionServerName, uuid);
-        var res = pendingActions.get(uuid);
-        var resultMessage = newResultMessage();
+        UUID uuid = request.getGoalId().uuid;
+        logger.fine("Request result for action {0} with UUID {1}", actionServerName, uuid);
+        CompletableFuture<R> res = pendingActions.get(uuid);
+        Action2ResultMessage<R> resultMessage = newResultMessage();
         if (res == null) {
             resultMessage.withStatus(StatusType.UNKNOWN);
         } else if (res.isCancelled()) {
@@ -218,7 +223,7 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
         } else {
             resultMessage.withStatus(StatusType.EXECUTING);
         }
-        LOGGER.fine(
+        logger.fine(
                 "Action {0} with UUID {1} has status {2}",
                 actionServerName, uuid, resultMessage.getStatus());
         return resultMessage;
@@ -226,10 +231,10 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
 
     private Action2SendGoalResponseMessage onSendGoal(Action2GoalMessage<G> goalMessage)
             throws Exception {
-        LOGGER.entering("onSendGoal " + actionServerName);
-        var uuid = goalMessage.getGoalId().uuid;
+        logger.entering("onSendGoal " + actionServerName);
+        UUID uuid = goalMessage.getGoalId().uuid;
         try {
-            LOGGER.info("Execute action {0} with UUID {1}", actionServerName, uuid);
+            logger.info("Execute action {0} with UUID {1}", actionServerName, uuid);
             pendingActions.put(uuid, actionHandler.execute(goalMessage.getGoal()));
             return new Action2SendGoalResponseMessage()
                     .withStatus(StatusType.ACCEPTED)
@@ -238,13 +243,13 @@ public class JRos2ActionServerImpl<G extends Message, R extends Message> extends
             throw new JRosActionLibException(
                     "Error executing action %s with UUID %s".formatted(actionServerName, uuid), e);
         } finally {
-            LOGGER.exiting("onNext " + actionServerName);
+            logger.exiting("onNext " + actionServerName);
         }
     }
 
     private CancelGoalResponseMessage onCancelGoal(CancelGoalRequestMessage goalMessage)
             throws Exception {
-        LOGGER.fine(
+        logger.fine(
                 "Cancel goal request for action {0} with UUID {1}",
                 actionServerName, goalMessage.goal_info.goal_id.uuid);
         return new CancelGoalResponseMessage();
